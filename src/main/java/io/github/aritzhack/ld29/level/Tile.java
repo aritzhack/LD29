@@ -121,7 +121,7 @@ public class Tile {
 
     public void press() {
         this.setShowing(true, true);
-        if (Level.RAND.nextInt(10) > 3) this.level.spawnEnemy();
+        if (Level.RAND.nextInt(10) > 6) this.level.spawnEnemy();
     }
 
     public void pressed() {

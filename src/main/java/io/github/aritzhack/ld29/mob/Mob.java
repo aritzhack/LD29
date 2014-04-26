@@ -88,4 +88,8 @@ public abstract class Mob {
     public boolean isDead() {
         return this.health <= 0;
     }
+
+    public void kill() {
+        this.health = 0;
+    }
 }

@@ -6,6 +6,7 @@ import io.github.aritzhack.ld29.Game;
 import io.github.aritzhack.ld29.mob.Enemy;
 import io.github.aritzhack.ld29.mob.Mob;
 import io.github.aritzhack.ld29.mob.Player;
+import io.github.aritzhack.ld29.mob.Ray;
 import io.github.aritzhack.ld29.util.Util;
 
 import java.awt.Color;
@@ -84,6 +85,16 @@ public class Level {
         this.toSpawn.forEach(this.mobs::add);
         this.toSpawn.clear();
         this.mobs.removeAll(this.mobs.stream().filter(Mob::isDead).collect(Collectors.toSet()));
+
+        this.mobs
+                .stream()
+                .filter(ray -> ray instanceof Ray) // Get only rays
+                .forEach(r -> this.mobs // Then, for each ray,
+                        .stream()
+                        .filter(enemy -> enemy instanceof Enemy) // Get only enemies
+                        .filter(e -> e.getBounds().intersects(r.getBounds())) // Get only those that collide with the ray
+                        .forEach(((Ray) r)::kill)); // Kill both the ray and the enemy
+
         for (Tile[] tiles : this.tiles) {
             for (Tile t : tiles) {
                 t.update(game);
