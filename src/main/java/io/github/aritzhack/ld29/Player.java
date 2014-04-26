@@ -6,6 +6,7 @@ import io.github.aritzhack.aritzh.awt.render.IRender;
 import io.github.aritzhack.aritzh.awt.render.Sprite;
 
 import java.awt.event.KeyEvent;
+import java.util.ConcurrentModificationException;
 
 import static io.github.aritzhack.ld29.Game.SPRITE_SIZE;
 
@@ -14,18 +15,19 @@ import static io.github.aritzhack.ld29.Game.SPRITE_SIZE;
  */
 public class Player extends Mob {
 
-    private final AnimatedSprite asprite = new AnimatedSprite(Game.SPRITES, "player", 4, 1000 / ANIM_SPEED);
-    private Sprite sprite;
+    private static final Sprite STILL_SPRITE = Game.SPRITES.get("player0");
+
+    private final AnimatedSprite aSprite = new AnimatedSprite(Game.SPRITES, "player", 4, 1000 / ANIM_SPEED);
     private double angle = Math.PI / 4;
 
     public Player(Level level, int x, int y) {
         super(level, x, y);
-        this.sprite = asprite.getCurrentFrame(0);
+        this.sprite = aSprite.getCurrentFrame(0);
     }
 
     @Override
     public void update() {
-        this.asprite.getCurrentFrame(ANIM_DELTA);
+        this.aSprite.getCurrentFrame(ANIM_DELTA);
 
         this.dx = this.dy = 0;
 
@@ -49,16 +51,18 @@ public class Player extends Mob {
             this.getTileAtMe().toggleFlag();
         }
 
-        if (ih.getMouseEvents().stream().filter(e -> e.getAction() == InputHandler.MouseAction.RELEASED).count() != 0) {
-            this.fire();
-        }
+        try {
+            if (ih.getMouseEvents().stream().filter(e -> e.getAction() == InputHandler.MouseAction.RELEASED).count() != 0) {
+                this.fire();
+            }
+        } catch (ConcurrentModificationException ignored) {} // Just in case...
 
         double dx = ih.getMousePos().x - this.getX() + 0.000000000001; // So that there is not ArithmeticException
         double dy = ih.getMousePos().y - this.getY();
 
         this.angle = dx > 0 ? Math.atan(dy / dx) + Math.PI / 2 : Math.atan(dy / dx) - Math.PI / 2;
 
-        this.sprite = Mob.rotate(this.angle, this.asprite.getCurrentFrame(0));
+        this.sprite = Mob.rotate(this.angle, (this.dx == 0 && this.dy == 0 ? STILL_SPRITE : this.aSprite.getCurrentFrame(0)));
 
         super.update();
     }

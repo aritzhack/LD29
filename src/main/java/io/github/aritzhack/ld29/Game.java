@@ -20,7 +20,7 @@ public class Game implements IGame {
 
     public static final String GAME_NAME = "LD29";
     public static final ILogger LOG = new SLF4JLogger(GAME_NAME);
-    public static final int SPRITE_SIZE = 32;
+    public static final int SPRITE_SIZE = 32, TOP_MARGIN = 80;
     public static final Map<String, Sprite> SPRITES = SpriteSheetLoader.load("sheet.sht");
 
     private final CanvasGame game;
@@ -29,7 +29,7 @@ public class Game implements IGame {
 
     public Game(int width, int height, boolean noFrame) {
         this.game = new CanvasGame(this, width, height, noFrame, LOG);
-        this.level = new Level(this, this.game.getWidth() / 32, this.game.getHeight() / 32);
+        this.level = new Level(this, this.game.getWidth() / SPRITE_SIZE, (this.game.getHeight() - TOP_MARGIN) / SPRITE_SIZE);
         this.render = new BufferedImageRenderer(this.game.getWidth(), this.game.getHeight(), SPRITES);
         this.game.requestFocus();
     }
@@ -46,6 +46,7 @@ public class Game implements IGame {
 
     @Override
     public void onRender(Graphics g) {
+        this.render.clear();
         this.level.render(this.render);
 
         g.drawImage(this.render.getImage(), 0, 0, this.render.getWidth(), this.render.getHeight(), null);

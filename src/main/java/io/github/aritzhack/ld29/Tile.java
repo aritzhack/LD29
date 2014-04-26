@@ -33,7 +33,7 @@ public class Tile {
         String spriteName;
         spriteName = (!this.isShowing ? (isFlagged ? "flagged" : "normal") : ((this.getType() == TileType.NORMAL && this.getAmountOfNeighbotMines() != 0) ? Integer.toString(this.getAmountOfNeighbotMines()) : this.type.getSprite(isPressed)));
 
-        r.draw(this.x * SPRITE_SIZE, this.y * SPRITE_SIZE, spriteName);
+        r.draw(this.x * SPRITE_SIZE, Game.TOP_MARGIN + this.y * SPRITE_SIZE, spriteName);
     }
 
     private int getAmountOfNeighbotMines() {

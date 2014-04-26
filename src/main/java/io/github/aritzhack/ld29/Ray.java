@@ -15,8 +15,8 @@ public class Ray extends Mob {
     public Ray(Level level, int x, int y, double direction) {
         super(level, x, y);
         this.sprite = Mob.rotate(direction, DEFAULT_SPRITE);
-        this.dx = (int) (Math.sin(direction) * SPEED);
-        this.dy = -(int) (Math.cos(direction) * SPEED);
+        this.dx = (int) (Math.sin(direction) * speed);
+        this.dy = -(int) (Math.cos(direction) * speed);
     }
 
     @Override

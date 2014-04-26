@@ -3,6 +3,8 @@ package io.github.aritzhack.ld29;
 import io.github.aritzhack.aritzh.awt.render.IRender;
 import io.github.aritzhack.aritzh.awt.render.Sprite;
 
+import java.awt.Rectangle;
+
 /**
  * @author Aritz Lopez
  */
@@ -12,12 +14,11 @@ public abstract class Mob {
     protected static final long ANIM_DELTA = 1_000_000_000L / 60L;
     protected final Level level;
 
-    protected int x;
-    protected int SPEED = 4;
-    protected int y;
-    protected int dx;
-    protected int dy;
+    protected int x, y;
+    protected int dx, dy;
+    protected int speed = 4;
     protected int health = 10;
+    protected Sprite sprite;
 
     public Mob(Level level, int x, int y) {
         this.level = level;
@@ -45,21 +46,25 @@ public abstract class Mob {
     }
 
     public void update() {
-        this.x += dx * SPEED;
-        this.y += dy * SPEED;
+        this.x += dx * speed;
+        this.y += dy * speed;
         int x2 = this.x;
         int y2 = this.y;
         this.x = Math.max(Math.min(this.x, this.level.getGame().getGame().getWidth() - Game.SPRITE_SIZE), 0);
         this.y = Math.max(Math.min(this.y, this.level.getGame().getGame().getHeight() - Game.SPRITE_SIZE), 0);
-        if(this.x != x2 || this.y != y2) this.onCollideWithWall();
-    }
-
-    public void render(IRender render) {
-
+        if (this.x != x2 || this.y != y2) this.onCollideWithWall();
     }
 
     public void onCollideWithWall() {
 
+    }
+
+    public Rectangle getBounds() {
+        return new Rectangle(this.x, this.y, this.sprite.getWidth(), this.sprite.getHeight());
+    }
+
+    public void render(IRender render) {
+        render.draw(this.x, this.y, this.sprite);
     }
 
     public Level getLevel() {
