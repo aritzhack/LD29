@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class Level {
 
     public static final Color BG_COLOR = new Color(133, 133, 133);
-    private static final Random RAND = new Random(System.currentTimeMillis());
+    public static final Random RAND = new Random(System.currentTimeMillis());
 
     private final Tile[][] tiles;
     private final int width;
@@ -72,11 +72,11 @@ public class Level {
     }
 
     public void render(Graphics g) {
-        Util.drawBeveled(g, BG_COLOR, 0, 0, this.game.getGame().getWidth(), Game.TOP_MARGIN, false);
+        Util.drawBeveled(g, BG_COLOR, 0, 0, this.game.getWidth(), Game.TOP_MARGIN, false);
 
         int margin1 = 10;
 
-        Util.drawBeveled(g, BG_COLOR, margin1, margin1, this.game.getGame().getWidth() - margin1 * 2, Game.TOP_MARGIN - margin1 * 2, true);
+        Util.drawBeveled(g, BG_COLOR, margin1, margin1, this.game.getWidth() - margin1 * 2, Game.TOP_MARGIN - margin1 * 2, true);
 
     }
 
@@ -92,8 +92,25 @@ public class Level {
         this.mobs.forEach(Mob::update);
     }
 
-    public void spawnEnemy(int tx, int ty) {
-        this.toSpawn.push(new Enemy(this, Game.TOP_MARGIN + tx * Game.SPRITE_SIZE, ty * Game.SPRITE_SIZE));
+    public void spawnEnemy() {
+        int x = RAND.nextInt(this.game.getWidth());
+        int y = Game.TOP_MARGIN + RAND.nextInt(this.game.getHeight() - Game.TOP_MARGIN);
+
+        switch (RAND.nextInt(4)) {
+            case 0: // TOP
+                y = Game.TOP_MARGIN + 30;
+                break;
+            case 1: // BOTTOM
+                y = this.game.getHeight() - 30;
+                break;
+            case 2: // LEFT
+                x = 30;
+                break;
+            case 3: // RIGHT
+                x = this.game.getWidth() - 30;
+                break;
+        }
+        this.toSpawn.add(new Enemy(this, x, y));
     }
 
     public void spawnMob(Mob mob) {
@@ -103,7 +120,7 @@ public class Level {
     public void showAll() {
         for (Tile[] tiles : this.tiles) {
             for (Tile t : tiles) {
-                t.setShowing(true);
+                t.setShowing(true, false);
             }
         }
     }

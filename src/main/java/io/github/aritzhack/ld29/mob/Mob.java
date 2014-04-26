@@ -18,7 +18,7 @@ public abstract class Mob {
 
     protected double x, y;
     protected double dx, dy;
-    protected int speed = 4;
+    protected double speed = 4;
     protected int health = 10;
     protected Sprite sprite;
 

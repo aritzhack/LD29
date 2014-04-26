@@ -63,24 +63,16 @@ public class Tile {
         if (this.isShowing && this.getType() == TileType.MINE) {
             for (Tile[] tiles : this.level.getTiles()) {
                 for (Tile t : tiles) {
-                    if (t.getType() == TileType.MINE) t.show();
+                    if (t.getType() == TileType.MINE) t.setShowing(true, false);
                     this.level.getGame().gameOver();
                 }
             }
         }
     }
 
-    public void show() {
-        this.setShowing(true, true);
-    }
-
-    public void setShowing(boolean isShowing) {
-        this.setShowing(isShowing, isShowing && !this.isShowing && this.type == TileType.NORMAL);
-    }
-
-    private void setShowing(boolean isShowing, boolean showOthers) {
+    public void setShowing(boolean isShowing, boolean showOthers) {
         this.isShowing = isShowing;
-        if (showOthers) this.getNeighborsToShow().forEach(t -> t.setShowing(true, false));
+        if (showOthers) this.getNeighborsToShow().forEach(Tile::pressed);
     }
 
     public Set<Tile> getNeighborsToShow() {
@@ -125,6 +117,16 @@ public class Tile {
 
         set.remove(null);
         return set.stream().filter(t -> !t.isShowing).filter(t -> t.getType() == TileType.NORMAL).collect(Collectors.toSet());
+    }
+
+    public void press() {
+        this.setShowing(true, true);
+        if (Level.RAND.nextInt(10) > 3) this.level.spawnEnemy();
+    }
+
+    public void pressed() {
+        this.setShowing(true, false);
+        if (Level.RAND.nextInt(10) > 3) this.level.spawnEnemy();
     }
 
     @Override

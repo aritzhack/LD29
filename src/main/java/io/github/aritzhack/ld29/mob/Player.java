@@ -72,7 +72,7 @@ public class Player extends Mob {
         }
 
         if (ih.wasKeyTyped(KeyEvent.VK_SPACE)) {
-            this.getTileAtMe().show();
+            this.getTileAtMe().press();
         }
         if (ih.wasKeyTyped(KeyEvent.VK_F)) {
             this.getTileAtMe().toggleFlag();

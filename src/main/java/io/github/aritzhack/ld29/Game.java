@@ -2,6 +2,7 @@ package io.github.aritzhack.ld29;
 
 import io.github.aritzhack.aritzh.awt.gameEngine.CanvasGame;
 import io.github.aritzhack.aritzh.awt.gameEngine.IGame;
+import io.github.aritzhack.aritzh.awt.gameEngine.input.InputHandler;
 import io.github.aritzhack.aritzh.awt.render.BufferedImageRenderer;
 import io.github.aritzhack.aritzh.awt.render.IRender;
 import io.github.aritzhack.aritzh.awt.render.Sprite;
@@ -58,14 +59,15 @@ public class Game implements IGame {
 
     @Override
     public void onUpdate() {
-        if (game.getInputHandler().wasKeyTyped(KeyEvent.VK_1)) {
+        final InputHandler ih = game.getInputHandler();
+        if (ih.wasKeyTyped(KeyEvent.VK_1)) {
             level.initLevel(Level.Difficulty.EASY);
-        } else if (game.getInputHandler().wasKeyTyped(KeyEvent.VK_2)) {
+        } else if (ih.wasKeyTyped(KeyEvent.VK_2)) {
             level.initLevel(Level.Difficulty.NORMAL);
-        } else if (game.getInputHandler().wasKeyTyped(KeyEvent.VK_3)) {
+        } else if (ih.wasKeyTyped(KeyEvent.VK_3)) {
             level.initLevel(Level.Difficulty.HARD);
         }
-        if(game.getInputHandler().wasKeyTyped(KeyEvent.VK_F2)) {
+        if (ih.wasKeyTyped(KeyEvent.VK_F2)) {
             Game.altMove = !Game.altMove;
         }
         this.level.update(this);
@@ -82,11 +84,19 @@ public class Game implements IGame {
         LOG.d("FPS: " + this.game.getFPS() + " | UPS: " + this.game.getUPS());
     }
 
+    public void gameOver() {
+
+    }
+
+    public int getWidth() {
+        return this.getGame().getWidth();
+    }
+
     public CanvasGame getGame() {
         return this.game;
     }
 
-    public void gameOver() {
-
+    public int getHeight() {
+        return this.getGame().getHeight();
     }
 }
