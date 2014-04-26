@@ -97,12 +97,12 @@ public class Tile {
                 .map(InputHandler.MouseInputEvent::getPosition)
                 .anyMatch(this.bounds::contains));
 
-        this.isFlagged |= h.getMouseEvents()
+        this.isFlagged = this.isFlagged ^ h.getMouseEvents()
                 .stream()
-                .filter(e -> e.getAction() == InputHandler.MouseAction.RELEASED)
+                .filter(e -> e.getAction() == InputHandler.MouseAction.CLICKED)
                 .filter(e -> e.getButton() == InputHandler.MouseButton.RIGHT)
                 .map(InputHandler.MouseInputEvent::getPosition)
-                .count() != 0;
+                .anyMatch(this.bounds::contains);
     }
 
     public Set<Tile> getHiddenNeighbors() {
