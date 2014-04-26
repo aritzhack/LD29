@@ -1,7 +1,8 @@
-package io.github.aritzhack.ld29;
+package io.github.aritzhack.ld29.level;
 
 import com.google.common.collect.Sets;
 import io.github.aritzhack.aritzh.awt.render.IRender;
+import io.github.aritzhack.ld29.Game;
 
 import java.awt.Rectangle;
 import java.util.Set;

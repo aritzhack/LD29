@@ -1,8 +1,15 @@
-package io.github.aritzhack.ld29;
+package io.github.aritzhack.ld29.level;
 
 import com.google.common.collect.Sets;
 import io.github.aritzhack.aritzh.awt.render.IRender;
+import io.github.aritzhack.ld29.Game;
+import io.github.aritzhack.ld29.mob.Enemy;
+import io.github.aritzhack.ld29.mob.Mob;
+import io.github.aritzhack.ld29.mob.Player;
+import io.github.aritzhack.ld29.util.Util;
 
+import java.awt.Color;
+import java.awt.Graphics;
 import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
@@ -13,6 +20,7 @@ import java.util.stream.Collectors;
  */
 public class Level {
 
+    public static final Color BG_COLOR = new Color(133, 133, 133);
     private static final Random RAND = new Random(System.currentTimeMillis());
 
     private final Tile[][] tiles;
@@ -28,7 +36,7 @@ public class Level {
         this.width = width;
         this.height = height;
         this.tiles = new Tile[width][height];
-        this.player = new Player(this, 10, 10);
+        this.player = new Player(this, Game.TOP_MARGIN + 10, 10);
         this.mobs.add(this.player);
         //this.enemies.add(new Enemy(this, 200, 200));
     }
@@ -53,12 +61,21 @@ public class Level {
     }
 
     public void render(IRender r) {
+
         for (Tile[] tiles : this.tiles) {
             for (Tile t : tiles) {
                 t.render(r);
             }
         }
         this.mobs.forEach(e -> e.render(r));
+    }
+
+    public void render(Graphics g) {
+        Util.drawBeveled(g, BG_COLOR, 0, 0, this.game.getGame().getWidth(), Game.TOP_MARGIN, false);
+
+        int margin1 = 10;
+
+        Util.drawBeveled(g, BG_COLOR, margin1, margin1, this.game.getGame().getWidth()-margin1*2, Game.TOP_MARGIN-margin1*2, true);
     }
 
     public void update(Game game) {
@@ -74,7 +91,7 @@ public class Level {
     }
 
     public void spawnEnemy(int tx, int ty) {
-        this.toSpawn.push(new Enemy(this, tx * Game.SPRITE_SIZE, ty * Game.SPRITE_SIZE));
+        this.toSpawn.push(new Enemy(this, Game.TOP_MARGIN + tx * Game.SPRITE_SIZE, ty * Game.SPRITE_SIZE));
     }
 
     public void spawnMob(Mob mob) {

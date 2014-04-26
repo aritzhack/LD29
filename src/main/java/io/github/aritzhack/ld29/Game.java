@@ -8,6 +8,7 @@ import io.github.aritzhack.aritzh.awt.render.Sprite;
 import io.github.aritzhack.aritzh.awt.render.SpriteSheetLoader;
 import io.github.aritzhack.aritzh.logging.ILogger;
 import io.github.aritzhack.aritzh.logging.SLF4JLogger;
+import io.github.aritzhack.ld29.level.Level;
 
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
@@ -50,6 +51,7 @@ public class Game implements IGame {
         this.level.render(this.render);
 
         g.drawImage(this.render.getImage(), 0, 0, this.render.getWidth(), this.render.getHeight(), null);
+        this.level.render(g);
     }
 
     @Override

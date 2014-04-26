@@ -1,9 +1,12 @@
-package io.github.aritzhack.ld29;
+package io.github.aritzhack.ld29.mob;
 
 import io.github.aritzhack.aritzh.awt.gameEngine.input.InputHandler;
 import io.github.aritzhack.aritzh.awt.render.AnimatedSprite;
 import io.github.aritzhack.aritzh.awt.render.IRender;
 import io.github.aritzhack.aritzh.awt.render.Sprite;
+import io.github.aritzhack.ld29.Game;
+import io.github.aritzhack.ld29.level.Level;
+import io.github.aritzhack.ld29.level.Tile;
 
 import java.awt.event.KeyEvent;
 import java.util.ConcurrentModificationException;
@@ -28,22 +31,42 @@ public class Player extends Mob {
     @Override
     public void update() {
         this.aSprite.getCurrentFrame(ANIM_DELTA);
+        final InputHandler ih = this.getLevel().getGame().getGame().getInputHandler();
+
+        double dx = ih.getMousePos().x - this.getX() - this.sprite.getWidth() / 2 + 0.000000000001; // So that there is not ArithmeticException
+        double dy = ih.getMousePos().y - this.getY() - this.sprite.getHeight() / 2;
+
+        this.angle = dx > 0 ? Math.atan(dy / dx) + Math.PI / 2 : Math.atan(dy / dx) - Math.PI / 2;
 
         this.dx = this.dy = 0;
 
-        final InputHandler ih = this.getLevel().getGame().getGame().getInputHandler();
+        final double cos = Math.cos(this.angle);
+        final double sin = Math.sin(this.angle);
+
+        final double mcos = Math.cos(-this.angle);
+        final double msin = Math.sin(-this.angle);
+
         if (ih.isKeyDown(KeyEvent.VK_W) || ih.isKeyDown(KeyEvent.VK_UP)) {
-            this.dy--;
+            //this.dy--;
+            this.dy -= cos;
+            this.dx += sin;
         }
         if (ih.isKeyDown(KeyEvent.VK_S) || ih.isKeyDown(KeyEvent.VK_DOWN)) {
-            this.dy++;
+            //this.dy++;
+            this.dy += cos;
+            this.dx -= sin;
         }
         if (ih.isKeyDown(KeyEvent.VK_A) || ih.isKeyDown(KeyEvent.VK_LEFT)) {
-            this.dx--;
+            //this.dx--;
+            this.dx += mcos;
+            this.dy -= msin;
         }
         if (ih.isKeyDown(KeyEvent.VK_D) || ih.isKeyDown(KeyEvent.VK_RIGHT)) {
-            this.dx++;
+            //this.dx++;
+            this.dx -= mcos;
+            this.dy += msin;
         }
+
         if (ih.wasKeyTyped(KeyEvent.VK_SPACE)) {
             this.getTileAtMe().show();
         }
@@ -57,18 +80,13 @@ public class Player extends Mob {
             }
         } catch (ConcurrentModificationException ignored) {} // Just in case...
 
-        double dx = ih.getMousePos().x - this.getX() + 0.000000000001; // So that there is not ArithmeticException
-        double dy = ih.getMousePos().y - this.getY();
-
-        this.angle = dx > 0 ? Math.atan(dy / dx) + Math.PI / 2 : Math.atan(dy / dx) - Math.PI / 2;
-
         this.sprite = Mob.rotate(this.angle, (this.dx == 0 && this.dy == 0 ? STILL_SPRITE : this.aSprite.getCurrentFrame(0)));
 
         super.update();
     }
 
     public Tile getTileAtMe() {
-        return this.level.getTileAt(this.getX() / SPRITE_SIZE, this.getY() / SPRITE_SIZE);
+        return this.level.getTileAt((int) (x + this.sprite.getWidth() / 2) / SPRITE_SIZE, (int) ((y - Game.TOP_MARGIN + this.sprite.getHeight() / 2) / SPRITE_SIZE));
     }
 
     private void fire() {
@@ -77,16 +95,6 @@ public class Player extends Mob {
 
     @Override
     public void render(IRender render) {
-        render.draw(this.x, this.y, this.sprite);
-    }
-
-    @Override
-    public int getX() {
-        return x + SPRITE_SIZE / 2;
-    }
-
-    @Override
-    public int getY() {
-        return y + SPRITE_SIZE / 2;
+        render.draw((int) this.x, (int) this.y, this.sprite);
     }
 }

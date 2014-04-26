@@ -1,6 +1,8 @@
-package io.github.aritzhack.ld29;
+package io.github.aritzhack.ld29.mob;
 
 import io.github.aritzhack.aritzh.awt.render.AnimatedSprite;
+import io.github.aritzhack.ld29.Game;
+import io.github.aritzhack.ld29.level.Level;
 
 /**
  * @author Aritz Lopez
@@ -19,8 +21,8 @@ public class Enemy extends Mob {
     public void update() {
         this.sprite = this.asprite.getCurrentFrame(ANIM_DELTA);
 
-        this.dx = Integer.signum(this.level.getPlayer().getX() - this.x);
-        this.dy = Integer.signum(this.level.getPlayer().getY() - this.y);
+        this.dx = Integer.signum((int) (this.level.getPlayer().getX() - this.x));
+        this.dy = Integer.signum((int) (this.level.getPlayer().getY() - this.y));
 
         super.update();
     }

@@ -1,7 +1,9 @@
-package io.github.aritzhack.ld29;
+package io.github.aritzhack.ld29.mob;
 
 import io.github.aritzhack.aritzh.awt.render.IRender;
 import io.github.aritzhack.aritzh.awt.render.Sprite;
+import io.github.aritzhack.ld29.Game;
+import io.github.aritzhack.ld29.level.Level;
 
 import java.awt.Rectangle;
 
@@ -14,13 +16,13 @@ public abstract class Mob {
     protected static final long ANIM_DELTA = 1_000_000_000L / 60L;
     protected final Level level;
 
-    protected int x, y;
-    protected int dx, dy;
+    protected double x, y;
+    protected double dx, dy;
     protected int speed = 4;
     protected int health = 10;
     protected Sprite sprite;
 
-    public Mob(Level level, int x, int y) {
+    public Mob(Level level, double x, double y) {
         this.level = level;
         this.x = x;
         this.y = y;
@@ -48,10 +50,10 @@ public abstract class Mob {
     public void update() {
         this.x += dx * speed;
         this.y += dy * speed;
-        int x2 = this.x;
-        int y2 = this.y;
+        double x2 = this.x;
+        double y2 = this.y;
         this.x = Math.max(Math.min(this.x, this.level.getGame().getGame().getWidth() - Game.SPRITE_SIZE), 0);
-        this.y = Math.max(Math.min(this.y, this.level.getGame().getGame().getHeight() - Game.SPRITE_SIZE), 0);
+        this.y = Math.max(Math.min(this.y, this.level.getGame().getGame().getHeight() - Game.SPRITE_SIZE), Game.TOP_MARGIN);
         if (this.x != x2 || this.y != y2) this.onCollideWithWall();
     }
 
@@ -60,22 +62,22 @@ public abstract class Mob {
     }
 
     public Rectangle getBounds() {
-        return new Rectangle(this.x, this.y, this.sprite.getWidth(), this.sprite.getHeight());
+        return new Rectangle((int) this.x, (int) this.y, this.sprite.getWidth(), this.sprite.getHeight());
     }
 
     public void render(IRender render) {
-        render.draw(this.x, this.y, this.sprite);
+        render.draw((int) this.x, (int) this.y, this.sprite);
     }
 
     public Level getLevel() {
         return level;
     }
 
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 
