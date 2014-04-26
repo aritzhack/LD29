@@ -1,8 +1,10 @@
 package io.github.aritzhack.ld29;
 
+import com.google.common.collect.Sets;
 import io.github.aritzhack.aritzh.awt.render.IRender;
 
 import java.util.Random;
+import java.util.Set;
 
 /**
  * @author Aritz Lopez
@@ -15,6 +17,7 @@ public class Level {
     private final int width;
     private final int height;
     private final Player player;
+    private final Set<Enemy> enemies = Sets.newHashSet();
     private Game game;
 
     public Level(Game game, int width, int height) {
@@ -23,6 +26,7 @@ public class Level {
         this.height = height;
         this.tiles = new Tile[width][height];
         this.player = new Player(this, 10, 10);
+        this.enemies.add(new Enemy(this, 200, 200));
     }
 
     public void initLevel(Difficulty difficulty) {
@@ -50,6 +54,7 @@ public class Level {
                 t.render(r);
             }
         }
+        this.enemies.forEach(e -> e.render(r));
         this.player.render(r);
     }
 
@@ -59,6 +64,7 @@ public class Level {
                 t.update(game);
             }
         }
+        this.enemies.forEach(Enemy::update);
         this.player.update();
     }
 
@@ -72,6 +78,10 @@ public class Level {
 
     public Game getGame() {
         return this.game;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 
     public static enum Difficulty {

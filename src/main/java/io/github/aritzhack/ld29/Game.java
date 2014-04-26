@@ -71,7 +71,7 @@ public class Game implements IGame {
 
     @Override
     public void onUpdatePS() {
-
+        LOG.d("FPS: " + this.game.getFPS() + " | UPS: " + this.game.getUPS());
     }
 
     public CanvasGame getGame() {

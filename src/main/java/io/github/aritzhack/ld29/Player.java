@@ -13,11 +13,7 @@ import static io.github.aritzhack.ld29.Game.SPRITE_SIZE;
  */
 public class Player extends Mob {
 
-    private static final int SPEED = 4;
-    private static final long ANIM_SPEED = 3;
-    private static final long ANIM_DELTA = 1_000_000_000L / 60L;
-
-    private AnimatedSprite sprite = new AnimatedSprite(Game.SPRITES, "player", 5, 1000);
+    private AnimatedSprite sprite = new AnimatedSprite(Game.SPRITES, "player", 4, 1000 / ANIM_SPEED);
 
     public Player(Level level, int x, int y) {
         super(level, x, y);
@@ -25,7 +21,9 @@ public class Player extends Mob {
 
     @Override
     public void update() {
-        this.sprite.getCurrentFrame(ANIM_DELTA * ANIM_SPEED);
+        this.sprite.getCurrentFrame(ANIM_DELTA);
+
+        this.dx = this.dy = 0;
 
         final InputHandler ih = this.getLevel().getGame().getGame().getInputHandler();
         if (ih.isKeyDown(KeyEvent.VK_W) || ih.isKeyDown(KeyEvent.VK_UP)) {
@@ -46,9 +44,6 @@ public class Player extends Mob {
         if (ih.wasKeyTyped(KeyEvent.VK_F)) {
             this.getTileAtMe().toggleFlag();
         }
-
-        this.dx *= SPEED;
-        this.dy *= SPEED;
         super.update();
     }
 

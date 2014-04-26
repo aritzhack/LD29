@@ -97,7 +97,7 @@ public class Tile {
     }
 
     public void setShowing(boolean isShowing) {
-        if (isShowing && !this.isShowing) {
+        if (isShowing && !this.isShowing && this.type == TileType.NORMAL) {
             this.isShowing = true;
             final Set<Tile> allConnected = Sets.newHashSet();
             this.getHiddenNeighbors().parallelStream().filter(t -> t.getType() == TileType.NORMAL).forEach(t -> allConnected.addAll(t.getHiddenNeighbors().stream().filter(t2 -> t2.getType() == TileType.NORMAL).collect(Collectors.toSet())));
