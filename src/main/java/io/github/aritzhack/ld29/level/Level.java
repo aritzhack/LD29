@@ -31,6 +31,7 @@ public class Level {
     private final Set<Mob> mobs = Sets.newHashSet();
     private final Stack<Mob> toSpawn = new Stack<>();
     private Game game;
+    private int enemyDamage = 0;
 
     public Level(Game game, int width, int height) {
         this.game = game;
@@ -39,11 +40,11 @@ public class Level {
         this.tiles = new Tile[width][height];
         this.player = new Player(this, Game.TOP_MARGIN + 10, 10);
         this.mobs.add(this.player);
-        //this.enemies.add(new Enemy(this, 200, 200));
     }
 
     public void initLevel(Difficulty difficulty) {
         RAND.setSeed(System.currentTimeMillis());
+        this.enemyDamage = difficulty.getEnemyDamage();
 
         for (int x = 0; x < this.width; x++) {
             for (int y = 0; y < this.height; y++) {
@@ -70,6 +71,10 @@ public class Level {
         }
         this.mobs.forEach(e -> e.render(r));
         r.draw(r.getWidth() / 2 - Game.SPRITE_SIZE / 2, Game.TOP_MARGIN / 2 - Game.SPRITE_SIZE / 2, "smiley");
+        r.draw(20, Game.TOP_MARGIN / 2 - 25, "healthbg");
+        for (int i = 0; i < this.player.getHealth() / 20f; i++) {
+            r.draw(35 + i * 20, Game.TOP_MARGIN / 2 - 17, "health_point");
+        }
     }
 
     public void render(Graphics g) {
@@ -82,18 +87,30 @@ public class Level {
     }
 
     public void update(Game game) {
+
         this.toSpawn.forEach(this.mobs::add);
         this.toSpawn.clear();
-        this.mobs.removeAll(this.mobs.stream().filter(Mob::isDead).collect(Collectors.toSet()));
+        clearDeadMobs();
 
         this.mobs
+            .stream()
+            .filter(ray -> ray instanceof Ray) // Get only rays
+            .forEach(r -> this.mobs // Then, for each ray,
                 .stream()
-                .filter(ray -> ray instanceof Ray) // Get only rays
-                .forEach(r -> this.mobs // Then, for each ray,
-                        .stream()
-                        .filter(enemy -> enemy instanceof Enemy) // Get only enemies
-                        .filter(e -> e.getBounds().intersects(r.getBounds())) // Get only those that collide with the ray
-                        .forEach(((Ray) r)::kill)); // Kill both the ray and the enemy
+                .filter(enemy -> enemy instanceof Enemy) // Get only enemies
+                .filter(e -> e.getBounds().intersects(r.getBounds())) // Get only those that collide with the ray
+                .forEach(((Ray) r)::kill)); // Kill both the ray and the enemy
+
+        clearDeadMobs();
+
+        this.mobs
+            .stream()
+            .filter(e -> e instanceof Enemy)
+            .filter(e -> ((Enemy) e).canDamage())
+            .filter(e -> e.getBounds().intersects(this.player.getBounds()))
+            .forEach(e -> ((Enemy) e).damage(this.player, this.enemyDamage));
+
+        if (this.player.isDead()) this.game.gameOver();
 
         for (Tile[] tiles : this.tiles) {
             for (Tile t : tiles) {
@@ -102,6 +119,8 @@ public class Level {
         }
         this.mobs.forEach(Mob::update);
     }
+
+    private void clearDeadMobs() {this.mobs.removeAll(this.mobs.stream().filter(Mob::isDead).filter(m -> !(m instanceof Player)).collect(Collectors.toSet()));}
 
     public void spawnEnemy() {
         int x = RAND.nextInt(this.game.getWidth());
@@ -145,17 +164,22 @@ public class Level {
     }
 
     public static enum Difficulty {
-        EASY(10), NORMAL(20), HARD(30);
+        EASY(10, 1), NORMAL(20, 2), HARD(30, 4);
 
         private final int mineProbability;
+        private final int enemyDamage;
 
-        private Difficulty(int mineProbability) {
+        private Difficulty(int mineProbability, int enemyDamage) {
             this.mineProbability = mineProbability;
+            this.enemyDamage = enemyDamage;
         }
 
         public int getMineProbability() {
             return mineProbability;
         }
 
+        public int getEnemyDamage() {
+            return enemyDamage;
+        }
     }
 }

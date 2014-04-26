@@ -1,5 +1,6 @@
 package io.github.aritzhack.ld29.mob;
 
+import io.github.aritzhack.aritzh.awt.audio.Sound;
 import io.github.aritzhack.aritzh.awt.gameEngine.input.InputHandler;
 import io.github.aritzhack.aritzh.awt.render.AnimatedSprite;
 import io.github.aritzhack.aritzh.awt.render.IRender;
@@ -19,6 +20,8 @@ import static io.github.aritzhack.ld29.Game.SPRITE_SIZE;
 public class Player extends Mob {
 
     private static final Sprite STILL_SPRITE = Game.SPRITES.get("player0");
+    private static final Sound JUMP = new Sound(Player.class.getResourceAsStream("/audio/jump.wav"));
+    private static final Sound LASER = new Sound(Player.class.getResourceAsStream("/audio/laser.wav"));
 
     private final AnimatedSprite aSprite = new AnimatedSprite(Game.SPRITES, "player", 4, 1000 / ANIM_SPEED);
     private double angle = Math.PI / 4;
@@ -26,6 +29,7 @@ public class Player extends Mob {
     public Player(Level level, int x, int y) {
         super(level, x, y);
         this.sprite = aSprite.getCurrentFrame(0);
+        this.health = 200;
     }
 
     @Override
@@ -73,6 +77,7 @@ public class Player extends Mob {
 
         if (ih.wasKeyTyped(KeyEvent.VK_SPACE)) {
             this.getTileAtMe().press();
+            JUMP.play();
         }
         if (ih.wasKeyTyped(KeyEvent.VK_F)) {
             this.getTileAtMe().toggleFlag();
@@ -81,6 +86,7 @@ public class Player extends Mob {
         try {
             if (ih.getMouseEvents().stream().filter(e -> e.getAction() == InputHandler.MouseAction.RELEASED).count() != 0) {
                 this.fire();
+                LASER.play();
             }
         } catch (ConcurrentModificationException ignored) {} // Just in case...
 
@@ -100,5 +106,10 @@ public class Player extends Mob {
     @Override
     public void render(IRender render) {
         render.draw((int) this.x, (int) this.y, this.sprite);
+    }
+
+    public void hurt(int count) {
+        this.health -= count;
+        Game.LOG.d("Health: {}", this.health);
     }
 }

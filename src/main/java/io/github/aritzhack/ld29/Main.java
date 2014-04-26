@@ -9,5 +9,5 @@ public class Main {
         Game game = new Game(800, 592, false);
         game.getGame().start();
     }
-    
+
 }

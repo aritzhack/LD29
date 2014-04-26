@@ -14,8 +14,8 @@ public class Ray extends Mob {
     public Ray(Level level, double x, double y, double direction) {
         super(level, x, y);
         this.sprite = rotate(direction, DEFAULT_SPRITE);
-        this.dx = (int) (Math.sin(direction) * speed);
-        this.dy = -(int) (Math.cos(direction) * speed);
+        this.dx = Math.sin(direction) * speed;
+        this.dy = -Math.cos(direction) * speed;
     }
 
     @Override
@@ -25,7 +25,7 @@ public class Ray extends Mob {
     }
 
     public void kill(Mob other) {
-        if(this.isDead()) return;
+        if (this.isDead()) return;
         this.kill();
         other.kill();
     }
