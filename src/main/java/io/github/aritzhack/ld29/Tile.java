@@ -19,7 +19,7 @@ public class Tile {
     private final int x;
     private final int y;
     private final Rectangle bounds;
-    private TileType type;
+    private final TileType type;
     private boolean isShowing = false, isPressed = false, isFlagged = false;
 
     public Tile(Level level, int x, int y, TileType type) {
@@ -30,27 +30,19 @@ public class Tile {
         this.bounds = new Rectangle(this.x * SPRITE_SIZE, this.y * SPRITE_SIZE, SPRITE_SIZE, SPRITE_SIZE);
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
     public void render(IRender r) {
         String spriteName;
-        if (!this.isShowing)
-            if (isFlagged) spriteName = "flagged";
-            else spriteName = "normal";
-        else if (this.getAmountOfNeighbotMines() != 0) spriteName = Integer.toString(this.getAmountOfNeighbotMines());
-        else spriteName = this.type.getSprite(isPressed);
+        spriteName = (!this.isShowing ? (isFlagged ? "flagged" : "normal") : ((this.getType() == TileType.NORMAL && this.getAmountOfNeighbotMines() != 0) ? Integer.toString(this.getAmountOfNeighbotMines()) : this.type.getSprite(isPressed)));
 
         r.draw(this.x * SPRITE_SIZE, this.y * SPRITE_SIZE, spriteName);
     }
 
     private int getAmountOfNeighbotMines() {
         return (int) this.getNeighborTiles().stream().filter(t -> t.getType() == TileType.MINE).count();
+    }
+
+    public TileType getType() {
+        return type;
     }
 
     public Set<Tile> getNeighborTiles() {
@@ -67,29 +59,19 @@ public class Tile {
         return set;
     }
 
-    public TileType getType() {
-        return type;
-    }
-
-    public void setType(TileType type) {
-        this.type = type;
-    }
-
     public void update(Game game) {
         InputHandler h = game.getGame().getInputHandler();
-        if (this.isPressed)
-            this.isPressed = h.getMouseEvents()
-                    .stream()
-                    .filter(e -> e.getAction() == InputHandler.MouseAction.RELEASED)
-                    .filter(e -> e.getButton() == InputHandler.MouseButton.LEFT)
-                    .count() == 0;
-        else
-            this.isPressed = h.getMouseEvents()
-                    .stream()
-                    .filter(e -> e.getAction() == InputHandler.MouseAction.PRESSED)
-                    .filter(e -> e.getButton() == InputHandler.MouseButton.LEFT)
-                    .map(InputHandler.MouseInputEvent::getPosition)
-                    .anyMatch(this.bounds::contains);
+        if (this.isPressed) this.isPressed = h.getMouseEvents()
+                .stream()
+                .filter(e -> e.getAction() == InputHandler.MouseAction.RELEASED)
+                .filter(e -> e.getButton() == InputHandler.MouseButton.LEFT)
+                .count() == 0;
+        else this.isPressed = h.getMouseEvents()
+                .stream()
+                .filter(e -> e.getAction() == InputHandler.MouseAction.PRESSED)
+                .filter(e -> e.getButton() == InputHandler.MouseButton.LEFT)
+                .map(InputHandler.MouseInputEvent::getPosition)
+                .anyMatch(this.bounds::contains);
         this.setShowing(this.isShowing || h.getMouseEvents()
                 .stream()
                 .filter(e -> e.getAction() == InputHandler.MouseAction.RELEASED)
@@ -103,18 +85,15 @@ public class Tile {
                 .filter(e -> e.getButton() == InputHandler.MouseButton.RIGHT)
                 .map(InputHandler.MouseInputEvent::getPosition)
                 .anyMatch(this.bounds::contains);
-    }
 
-    public Set<Tile> getHiddenNeighbors() {
-        return this.getNeighborTiles().stream().filter(t -> !t.isShowing).collect(Collectors.toSet());
-    }
-
-    public Rectangle getBounds() {
-        return this.bounds;
-    }
-
-    public boolean isShowing() {
-        return isShowing;
+        if (this.isShowing && this.getType() == TileType.MINE) {
+            for (Tile[] tiles : this.level.getTiles()) {
+                for (Tile t : tiles) {
+                    if (t.getType() == TileType.MINE) t.show();
+                    this.level.getGame().gameOver();
+                }
+            }
+        }
     }
 
     public void setShowing(boolean isShowing) {
@@ -130,6 +109,30 @@ public class Tile {
 
     public void show() {
         this.setShowing(true);
+    }
+
+    public Set<Tile> getHiddenNeighbors() {
+        Set<Tile> set = Sets.newHashSet();
+        Tile mr = this.level.getTileAt(this.x + 1, this.y/**/);
+        Tile ml = this.level.getTileAt(this.x - 1, this.y/**/);
+        Tile mb = this.level.getTileAt(this.x/**/, this.y + 1);
+        Tile mt = this.level.getTileAt(this.x/**/, this.y - 1);
+        Tile lt = this.level.getTileAt(this.x - 1, this.y - 1);
+        Tile rt = this.level.getTileAt(this.x + 1, this.y - 1);
+        Tile lb = this.level.getTileAt(this.x - 1, this.y + 1);
+        Tile rb = this.level.getTileAt(this.x + 1, this.y + 1);
+
+        set.add(mr);
+        set.add(ml);
+        set.add(mb);
+        set.add(mt);
+
+        if (ml != null && mt != null) set.add(lt);
+        if (ml != null && mb != null) set.add(lb);
+        if (mr != null && mt != null) set.add(rt);
+        if (mr != null && mb != null) set.add(rb);
+        set.remove(null);
+        return set;
     }
 
     @Override
@@ -148,6 +151,10 @@ public class Tile {
 
         return isPressed == tile.isPressed && isShowing == tile.isShowing && x == tile.x && y == tile.y && type == tile.type;
 
+    }
+
+    public void toggleFlag() {
+        this.isFlagged = !this.isFlagged;
     }
 
     public static enum TileType {

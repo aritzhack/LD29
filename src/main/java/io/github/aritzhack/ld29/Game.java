@@ -21,16 +21,17 @@ public class Game implements IGame {
     public static final String GAME_NAME = "LD29";
     public static final ILogger LOG = new SLF4JLogger(GAME_NAME);
     public static final int SPRITE_SIZE = 32;
+    public static final Map<String, Sprite> SPRITES = SpriteSheetLoader.load("sheet.sht");
 
-    private static final Map<String, Sprite> sprites = SpriteSheetLoader.load("sheet.sht");
     private final CanvasGame game;
     private final Level level;
     private final IRender render;
 
     public Game(int width, int height, boolean noFrame) {
         this.game = new CanvasGame(this, width, height, noFrame, LOG);
-        this.level = new Level(this.game.getWidth() / 32, this.game.getHeight() / 32);
-        this.render = new BufferedImageRenderer(this.game.getWidth(), this.game.getHeight(), sprites);
+        this.level = new Level(this, this.game.getWidth() / 32, this.game.getHeight() / 32);
+        this.render = new BufferedImageRenderer(this.game.getWidth(), this.game.getHeight(), SPRITES);
+        this.game.requestFocus();
     }
 
     @Override
@@ -52,9 +53,6 @@ public class Game implements IGame {
 
     @Override
     public void onUpdate() {
-        if (game.getInputHandler().wasKeyTyped(KeyEvent.VK_S)) {
-            this.level.showAll();
-        }
         if (game.getInputHandler().wasKeyTyped(KeyEvent.VK_1)) {
             level.initLevel(Level.Difficulty.EASY);
         } else if (game.getInputHandler().wasKeyTyped(KeyEvent.VK_2)) {
@@ -78,5 +76,9 @@ public class Game implements IGame {
 
     public CanvasGame getGame() {
         return this.game;
+    }
+
+    public void gameOver() {
+
     }
 }

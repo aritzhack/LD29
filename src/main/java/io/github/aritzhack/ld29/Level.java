@@ -14,11 +14,15 @@ public class Level {
     private final Tile[][] tiles;
     private final int width;
     private final int height;
+    private final Player player;
+    private Game game;
 
-    public Level(int width, int height) {
+    public Level(Game game, int width, int height) {
+        this.game = game;
         this.width = width;
         this.height = height;
         this.tiles = new Tile[width][height];
+        this.player = new Player(this, 10, 10);
     }
 
     public void initLevel(Difficulty difficulty) {
@@ -26,7 +30,7 @@ public class Level {
 
         for (int x = 0; x < this.width; x++) {
             for (int y = 0; y < this.height; y++) {
-                this.tiles[x][y] = new Tile(this, x, y, RAND.nextInt(100) < difficulty.getMinePosibility() ? Tile.TileType.MINE : Tile.TileType.NORMAL);
+                this.tiles[x][y] = new Tile(this, x, y, RAND.nextInt(100) < difficulty.getMineProbability() ? Tile.TileType.MINE : Tile.TileType.NORMAL);
             }
         }
     }
@@ -46,6 +50,7 @@ public class Level {
                 t.render(r);
             }
         }
+        this.player.render(r);
     }
 
     public void update(Game game) {
@@ -54,6 +59,7 @@ public class Level {
                 t.update(game);
             }
         }
+        this.player.update();
     }
 
     public void showAll() {
@@ -64,17 +70,21 @@ public class Level {
         }
     }
 
+    public Game getGame() {
+        return this.game;
+    }
+
     public static enum Difficulty {
         EASY(10), NORMAL(20), HARD(30);
 
-        private final int minePosibility;
+        private final int mineProbability;
 
-        private Difficulty(int minePosibility) {
-            this.minePosibility = minePosibility;
+        private Difficulty(int mineProbability) {
+            this.mineProbability = mineProbability;
         }
 
-        public int getMinePosibility() {
-            return minePosibility;
+        public int getMineProbability() {
+            return mineProbability;
         }
 
     }
