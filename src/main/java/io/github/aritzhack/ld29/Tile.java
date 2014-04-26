@@ -1,7 +1,6 @@
 package io.github.aritzhack.ld29;
 
 import com.google.common.collect.Sets;
-import io.github.aritzhack.aritzh.awt.gameEngine.input.InputHandler;
 import io.github.aritzhack.aritzh.awt.render.IRender;
 
 import java.awt.Rectangle;
@@ -60,32 +59,6 @@ public class Tile {
     }
 
     public void update(Game game) {
-        InputHandler h = game.getGame().getInputHandler();
-        if (this.isPressed) this.isPressed = h.getMouseEvents()
-                .stream()
-                .filter(e -> e.getAction() == InputHandler.MouseAction.RELEASED)
-                .filter(e -> e.getButton() == InputHandler.MouseButton.LEFT)
-                .count() == 0;
-        else this.isPressed = h.getMouseEvents()
-                .stream()
-                .filter(e -> e.getAction() == InputHandler.MouseAction.PRESSED)
-                .filter(e -> e.getButton() == InputHandler.MouseButton.LEFT)
-                .map(InputHandler.MouseInputEvent::getPosition)
-                .anyMatch(this.bounds::contains);
-        this.setShowing(this.isShowing || h.getMouseEvents()
-                .stream()
-                .filter(e -> e.getAction() == InputHandler.MouseAction.RELEASED)
-                .filter(e -> e.getButton() == InputHandler.MouseButton.LEFT)
-                .map(InputHandler.MouseInputEvent::getPosition)
-                .anyMatch(this.bounds::contains));
-
-        this.isFlagged = this.isFlagged ^ h.getMouseEvents()
-                .stream()
-                .filter(e -> e.getAction() == InputHandler.MouseAction.CLICKED)
-                .filter(e -> e.getButton() == InputHandler.MouseButton.RIGHT)
-                .map(InputHandler.MouseInputEvent::getPosition)
-                .anyMatch(this.bounds::contains);
-
         if (this.isShowing && this.getType() == TileType.MINE) {
             for (Tile[] tiles : this.level.getTiles()) {
                 for (Tile t : tiles) {
@@ -94,6 +67,10 @@ public class Tile {
                 }
             }
         }
+    }
+
+    public void show() {
+        this.setShowing(true);
     }
 
     public void setShowing(boolean isShowing) {
@@ -107,30 +84,32 @@ public class Tile {
         this.isShowing = isShowing;
     }
 
-    public void show() {
-        this.setShowing(true);
-    }
-
     public Set<Tile> getHiddenNeighbors() {
         Set<Tile> set = Sets.newHashSet();
+
+        // Orthogonals
         Tile mr = this.level.getTileAt(this.x + 1, this.y/**/);
         Tile ml = this.level.getTileAt(this.x - 1, this.y/**/);
         Tile mb = this.level.getTileAt(this.x/**/, this.y + 1);
         Tile mt = this.level.getTileAt(this.x/**/, this.y - 1);
+
+        // Diagonals
         Tile lt = this.level.getTileAt(this.x - 1, this.y - 1);
         Tile rt = this.level.getTileAt(this.x + 1, this.y - 1);
         Tile lb = this.level.getTileAt(this.x - 1, this.y + 1);
         Tile rb = this.level.getTileAt(this.x + 1, this.y + 1);
 
+        // Add always orthogonals
         set.add(mr);
         set.add(ml);
         set.add(mb);
         set.add(mt);
 
-        if (ml != null && mt != null) set.add(lt);
-        if (ml != null && mb != null) set.add(lb);
-        if (mr != null && mt != null) set.add(rt);
-        if (mr != null && mb != null) set.add(rb);
+        // Diagonals only if the two nearby orthogonals are normal
+        if (ml != null && ml.getType() == TileType.NORMAL && mt != null && mt.getType() == TileType.NORMAL) set.add(lt);
+        if (ml != null && ml.getType() == TileType.NORMAL && mb != null && mb.getType() == TileType.NORMAL) set.add(lb);
+        if (mr != null && mr.getType() == TileType.NORMAL && mt != null && mt.getType() == TileType.NORMAL) set.add(rt);
+        if (mr != null && mr.getType() == TileType.NORMAL && mb != null && mb.getType() == TileType.NORMAL) set.add(rb);
         set.remove(null);
         return set;
     }

@@ -25,6 +25,7 @@ public class Enemy extends Mob {
         super.update();
     }
 
+    @Override
     public void render(IRender render) {
         render.draw(this.x, this.y, 0, this.sprite);
     }

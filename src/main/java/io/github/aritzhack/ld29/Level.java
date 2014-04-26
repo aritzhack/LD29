@@ -5,6 +5,8 @@ import io.github.aritzhack.aritzh.awt.render.IRender;
 
 import java.util.Random;
 import java.util.Set;
+import java.util.Stack;
+import java.util.stream.Collectors;
 
 /**
  * @author Aritz Lopez
@@ -17,7 +19,8 @@ public class Level {
     private final int width;
     private final int height;
     private final Player player;
-    private final Set<Enemy> enemies = Sets.newHashSet();
+    private final Set<Mob> mobs = Sets.newHashSet();
+    private final Stack<Mob> toSpawn = new Stack<>();
     private Game game;
 
     public Level(Game game, int width, int height) {
@@ -26,7 +29,8 @@ public class Level {
         this.height = height;
         this.tiles = new Tile[width][height];
         this.player = new Player(this, 10, 10);
-        this.enemies.add(new Enemy(this, 200, 200));
+        this.mobs.add(this.player);
+        //this.enemies.add(new Enemy(this, 200, 200));
     }
 
     public void initLevel(Difficulty difficulty) {
@@ -54,18 +58,27 @@ public class Level {
                 t.render(r);
             }
         }
-        this.enemies.forEach(e -> e.render(r));
-        this.player.render(r);
+        this.mobs.forEach(e -> e.render(r));
     }
 
     public void update(Game game) {
+        this.toSpawn.forEach(this.mobs::add);
+        this.toSpawn.clear();
+        this.mobs.removeAll(this.mobs.stream().filter(Mob::isDead).collect(Collectors.toSet()));
         for (Tile[] tiles : this.tiles) {
             for (Tile t : tiles) {
                 t.update(game);
             }
         }
-        this.enemies.forEach(Enemy::update);
-        this.player.update();
+        this.mobs.forEach(Mob::update);
+    }
+
+    public void spawnEnemy(int tx, int ty) {
+        this.toSpawn.push(new Enemy(this, tx * Game.SPRITE_SIZE, ty * Game.SPRITE_SIZE));
+    }
+
+    public void spawnMob(Mob mob) {
+        this.toSpawn.push(mob);
     }
 
     public void showAll() {
