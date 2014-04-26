@@ -71,48 +71,60 @@ public class Tile {
     }
 
     public void show() {
-        this.setShowing(true);
+        this.setShowing(true, true);
     }
 
     public void setShowing(boolean isShowing) {
-        if (isShowing && !this.isShowing && this.type == TileType.NORMAL) {
-            this.isShowing = true;
-            final Set<Tile> allConnected = Sets.newHashSet();
-            this.getHiddenNeighbors().parallelStream().filter(t -> t.getType() == TileType.NORMAL).forEach(t -> allConnected.addAll(t.getHiddenNeighbors().stream().filter(t2 -> t2.getType() == TileType.NORMAL).collect(Collectors.toSet())));
-            allConnected.stream().distinct().forEach(Tile::show);
-            return;
-        }
-        this.isShowing = isShowing;
+        this.setShowing(isShowing, isShowing && !this.isShowing && this.type == TileType.NORMAL);
     }
 
-    public Set<Tile> getHiddenNeighbors() {
+    private void setShowing(boolean isShowing, boolean showOthers) {
+        this.isShowing = isShowing;
+        if (showOthers) this.getNeighborsToShow().forEach(t -> t.setShowing(true, false));
+    }
+
+    public Set<Tile> getNeighborsToShow() {
         Set<Tile> set = Sets.newHashSet();
 
-        // Orthogonals
-        Tile mr = this.level.getTileAt(this.x + 1, this.y/**/);
-        Tile ml = this.level.getTileAt(this.x - 1, this.y/**/);
-        Tile mb = this.level.getTileAt(this.x/**/, this.y + 1);
-        Tile mt = this.level.getTileAt(this.x/**/, this.y - 1);
+        // 3x3: Orthogonals
+        set.add(this.level.getTileAt(this.x + 1, this.y/**/));
+        set.add(this.level.getTileAt(this.x - 1, this.y/**/));
+        set.add(this.level.getTileAt(this.x/**/, this.y + 1));
+        set.add(this.level.getTileAt(this.x/**/, this.y - 1));
 
-        // Diagonals
-        Tile lt = this.level.getTileAt(this.x - 1, this.y - 1);
-        Tile rt = this.level.getTileAt(this.x + 1, this.y - 1);
-        Tile lb = this.level.getTileAt(this.x - 1, this.y + 1);
-        Tile rb = this.level.getTileAt(this.x + 1, this.y + 1);
+        // 3x3: Diagonals
+        set.add(this.level.getTileAt(this.x - 1, this.y - 1));
+        set.add(this.level.getTileAt(this.x + 1, this.y - 1));
+        set.add(this.level.getTileAt(this.x - 1, this.y + 1));
+        set.add(this.level.getTileAt(this.x + 1, this.y + 1));
+        set.add(this.level.getTileAt(this.x + 1, this.y + 1));
 
-        // Add always orthogonals
-        set.add(mr);
-        set.add(ml);
-        set.add(mb);
-        set.add(mt);
+        // 5x5: Top
+        set.add(this.level.getTileAt(this.x - 2, this.y - 2));
+        set.add(this.level.getTileAt(this.x - 1, this.y - 2));
+        set.add(this.level.getTileAt(this.x/**/, this.y - 2));
+        set.add(this.level.getTileAt(this.x + 1, this.y - 2));
+        set.add(this.level.getTileAt(this.x + 2, this.y - 2));
 
-        // Diagonals only if the two nearby orthogonals are normal
-        if (ml != null && ml.getType() == TileType.NORMAL && mt != null && mt.getType() == TileType.NORMAL) set.add(lt);
-        if (ml != null && ml.getType() == TileType.NORMAL && mb != null && mb.getType() == TileType.NORMAL) set.add(lb);
-        if (mr != null && mr.getType() == TileType.NORMAL && mt != null && mt.getType() == TileType.NORMAL) set.add(rt);
-        if (mr != null && mr.getType() == TileType.NORMAL && mb != null && mb.getType() == TileType.NORMAL) set.add(rb);
+        // 5x5: Bottom
+        set.add(this.level.getTileAt(this.x - 2, this.y + 2));
+        set.add(this.level.getTileAt(this.x - 1, this.y + 2));
+        set.add(this.level.getTileAt(this.x/**/, this.y + 2));
+        set.add(this.level.getTileAt(this.x + 1, this.y + 2));
+        set.add(this.level.getTileAt(this.x + 2, this.y + 2));
+
+        // 5x5: Left
+        set.add(this.level.getTileAt(this.x - 2, this.y - 1));
+        set.add(this.level.getTileAt(this.x - 2, this.y/**/));
+        set.add(this.level.getTileAt(this.x - 2, this.y + 1));
+
+        // 5x5: Right
+        set.add(this.level.getTileAt(this.x + 2, this.y - 1));
+        set.add(this.level.getTileAt(this.x + 2, this.y/**/));
+        set.add(this.level.getTileAt(this.x + 2, this.y + 1));
+
         set.remove(null);
-        return set;
+        return set.stream().filter(t -> !t.isShowing).filter(t -> t.getType() == TileType.NORMAL).collect(Collectors.toSet());
     }
 
     @Override

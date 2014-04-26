@@ -24,6 +24,8 @@ public class Game implements IGame {
     public static final int SPRITE_SIZE = 32, TOP_MARGIN = 80;
     public static final Map<String, Sprite> SPRITES = SpriteSheetLoader.load("sheet.sht");
 
+    public static boolean altMove = false;
+
     private final CanvasGame game;
     private final Level level;
     private final IRender render;
@@ -48,10 +50,10 @@ public class Game implements IGame {
     @Override
     public void onRender(Graphics g) {
         this.render.clear();
+        this.level.render(g);
         this.level.render(this.render);
 
         g.drawImage(this.render.getImage(), 0, 0, this.render.getWidth(), this.render.getHeight(), null);
-        this.level.render(g);
     }
 
     @Override
@@ -62,6 +64,9 @@ public class Game implements IGame {
             level.initLevel(Level.Difficulty.NORMAL);
         } else if (game.getInputHandler().wasKeyTyped(KeyEvent.VK_3)) {
             level.initLevel(Level.Difficulty.HARD);
+        }
+        if(game.getInputHandler().wasKeyTyped(KeyEvent.VK_F2)) {
+            Game.altMove = !Game.altMove;
         }
         this.level.update(this);
         this.game.getInputHandler().clearMouseEvents();

@@ -68,6 +68,7 @@ public class Level {
             }
         }
         this.mobs.forEach(e -> e.render(r));
+        r.draw(r.getWidth() / 2 - Game.SPRITE_SIZE / 2, Game.TOP_MARGIN / 2 - Game.SPRITE_SIZE / 2, "smiley");
     }
 
     public void render(Graphics g) {
@@ -75,7 +76,8 @@ public class Level {
 
         int margin1 = 10;
 
-        Util.drawBeveled(g, BG_COLOR, margin1, margin1, this.game.getGame().getWidth()-margin1*2, Game.TOP_MARGIN-margin1*2, true);
+        Util.drawBeveled(g, BG_COLOR, margin1, margin1, this.game.getGame().getWidth() - margin1 * 2, Game.TOP_MARGIN - margin1 * 2, true);
+
     }
 
     public void update(Game game) {

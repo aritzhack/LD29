@@ -47,24 +47,28 @@ public class Player extends Mob {
         final double msin = Math.sin(-this.angle);
 
         if (ih.isKeyDown(KeyEvent.VK_W) || ih.isKeyDown(KeyEvent.VK_UP)) {
-            //this.dy--;
-            this.dy -= cos;
-            this.dx += sin;
+            if (Game.altMove) {
+                this.dy -= cos;
+                this.dx += sin;
+            } else this.dy--;
         }
         if (ih.isKeyDown(KeyEvent.VK_S) || ih.isKeyDown(KeyEvent.VK_DOWN)) {
-            //this.dy++;
-            this.dy += cos;
-            this.dx -= sin;
+            if (Game.altMove) {
+                this.dy += cos;
+                this.dx -= sin;
+            } else this.dy++;
         }
         if (ih.isKeyDown(KeyEvent.VK_A) || ih.isKeyDown(KeyEvent.VK_LEFT)) {
-            //this.dx--;
-            this.dx += mcos;
-            this.dy -= msin;
+            if (Game.altMove) {
+                this.dx += mcos;
+                this.dy -= msin;
+            } else this.dx--;
         }
         if (ih.isKeyDown(KeyEvent.VK_D) || ih.isKeyDown(KeyEvent.VK_RIGHT)) {
-            //this.dx++;
-            this.dx -= mcos;
-            this.dy += msin;
+            if (Game.altMove) {
+                this.dx -= mcos;
+                this.dy += msin;
+            } else this.dx++;
         }
 
         if (ih.wasKeyTyped(KeyEvent.VK_SPACE)) {
