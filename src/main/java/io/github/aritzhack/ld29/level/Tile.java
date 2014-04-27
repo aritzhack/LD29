@@ -64,7 +64,7 @@ public class Tile {
             for (Tile[] tiles : this.level.getTiles()) {
                 for (Tile t : tiles) {
                     if (t.getType() == TileType.MINE) t.setShowing(true, false);
-                    this.level.getGame().gameOver();
+                    this.level.gameOver();
                 }
             }
         }
@@ -121,12 +121,12 @@ public class Tile {
 
     public void press() {
         this.setShowing(true, true);
-        if (Level.RAND.nextInt(10) > 6) this.level.spawnEnemy();
+        if (Level.RAND.nextInt(10) > 6 && this.type != TileType.MINE) this.level.spawnEnemy();
     }
 
     public void pressed() {
         this.setShowing(true, false);
-        if (Level.RAND.nextInt(10) > 3) this.level.spawnEnemy();
+        if (Level.RAND.nextInt(10) > 3 && this.type != TileType.MINE) this.level.spawnEnemy();
     }
 
     @Override

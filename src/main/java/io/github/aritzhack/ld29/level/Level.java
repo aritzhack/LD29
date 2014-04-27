@@ -37,6 +37,7 @@ public class Level {
     private boolean smileyIsPressed = false;
     private Game game;
     private int enemyDamage = 0;
+    private boolean gameOver;
 
     public Level(Game game, int width, int height) {
         this.game = game;
@@ -77,7 +78,7 @@ public class Level {
         }
         this.mobs.forEach(e -> e.render(r));
 
-        r.draw(r.getWidth() / 2 - Game.SPRITE_SIZE / 2, Game.TOP_MARGIN / 2 - Game.SPRITE_SIZE / 2, "smiley");
+        r.draw(r.getWidth() / 2 - Game.SPRITE_SIZE / 2, Game.TOP_MARGIN / 2 - Game.SPRITE_SIZE / 2, this.gameOver ? "sad" : this.smileyIsPressed ? "mouth" : "smiley");
         final int leftMargin = 115;
         r.draw(leftMargin + 20, Game.TOP_MARGIN / 2 - 25, "healthbg");
         for (int i = 0; i < this.player.getHealth() / 20f; i++) {
@@ -119,6 +120,8 @@ public class Level {
 
     public void update(Game game) {
 
+        if(this.gameOver) return;
+
         this.toSpawn.forEach(this.mobs::add);
         this.toSpawn.clear();
         clearDeadMobs();
@@ -141,7 +144,7 @@ public class Level {
             .filter(e -> e.getBounds().intersects(this.player.getBounds()))
             .forEach(e -> ((Enemy) e).damage(this.player, this.enemyDamage));
 
-        if (this.player.isDead()) this.game.gameOver();
+        if (this.player.isDead()) this.gameOver = true;
 
         for (Tile[] tiles : this.tiles) {
             for (Tile t : tiles) {
@@ -200,6 +203,10 @@ public class Level {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public void gameOver() {
+        this.gameOver = true;
     }
 
     public static enum Difficulty {
