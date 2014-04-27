@@ -1,10 +1,10 @@
-package io.github.aritzhack.ld29.gui;
+package io.github.aritzhack.underMine.gui;
 
 import io.github.aritzhack.aritzh.awt.gameEngine.input.InputHandler;
 import io.github.aritzhack.aritzh.util.NotNull;
 import io.github.aritzhack.aritzh.util.Nullable;
-import io.github.aritzhack.ld29.Game;
-import io.github.aritzhack.ld29.util.Util;
+import io.github.aritzhack.underMine.Game;
+import io.github.aritzhack.underMine.util.Util;
 
 import java.awt.Color;
 import java.awt.Graphics;

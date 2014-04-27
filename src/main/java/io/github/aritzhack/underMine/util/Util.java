@@ -1,4 +1,4 @@
-package io.github.aritzhack.ld29.util;
+package io.github.aritzhack.underMine.util;
 
 import java.awt.Color;
 import java.awt.FontMetrics;

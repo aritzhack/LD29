@@ -1,14 +1,14 @@
-package io.github.aritzhack.ld29.level;
+package io.github.aritzhack.underMine.level;
 
 import com.google.common.collect.Sets;
 import io.github.aritzhack.aritzh.awt.gameEngine.input.InputHandler;
 import io.github.aritzhack.aritzh.awt.render.IRender;
-import io.github.aritzhack.ld29.Game;
-import io.github.aritzhack.ld29.mob.Enemy;
-import io.github.aritzhack.ld29.mob.Mob;
-import io.github.aritzhack.ld29.mob.Player;
-import io.github.aritzhack.ld29.mob.Ray;
-import io.github.aritzhack.ld29.util.Util;
+import io.github.aritzhack.underMine.Game;
+import io.github.aritzhack.underMine.mob.Enemy;
+import io.github.aritzhack.underMine.mob.Mob;
+import io.github.aritzhack.underMine.mob.Player;
+import io.github.aritzhack.underMine.mob.Ray;
+import io.github.aritzhack.underMine.util.Util;
 
 import java.awt.Color;
 import java.awt.Graphics;

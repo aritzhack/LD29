@@ -1,9 +1,9 @@
-package io.github.aritzhack.ld29.mob;
+package io.github.aritzhack.underMine.mob;
 
 import io.github.aritzhack.aritzh.awt.render.IRender;
 import io.github.aritzhack.aritzh.awt.render.Sprite;
-import io.github.aritzhack.ld29.Game;
-import io.github.aritzhack.ld29.level.Level;
+import io.github.aritzhack.underMine.Game;
+import io.github.aritzhack.underMine.level.Level;
 
 import java.awt.Rectangle;
 

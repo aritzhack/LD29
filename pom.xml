@@ -49,7 +49,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>io.github.aritzhack.ld29.Main</mainClass>
+							<mainClass>io.github.aritzhack.underMine.Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -62,7 +62,7 @@
 					<descriptorId>jar-with-dependencies</descriptorId>
 					<archive>
 						<manifest>
-							<mainClass>io.github.aritzhack.ld29.Main</mainClass>
+							<mainClass>io.github.aritzhack.underMine.Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

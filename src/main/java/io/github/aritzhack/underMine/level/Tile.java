@@ -1,14 +1,14 @@
-package io.github.aritzhack.ld29.level;
+package io.github.aritzhack.underMine.level;
 
 import com.google.common.collect.Sets;
 import io.github.aritzhack.aritzh.awt.render.IRender;
-import io.github.aritzhack.ld29.Game;
+import io.github.aritzhack.underMine.Game;
 
 import java.awt.Rectangle;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static io.github.aritzhack.ld29.Game.SPRITE_SIZE;
+import static io.github.aritzhack.underMine.Game.SPRITE_SIZE;
 
 /**
  * @author Aritz Lopez

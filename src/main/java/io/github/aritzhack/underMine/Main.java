@@ -1,4 +1,4 @@
-package io.github.aritzhack.ld29;
+package io.github.aritzhack.underMine;
 
 /**
  * @author Aritz Lopez

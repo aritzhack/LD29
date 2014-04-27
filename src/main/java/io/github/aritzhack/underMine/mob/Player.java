@@ -1,17 +1,17 @@
-package io.github.aritzhack.ld29.mob;
+package io.github.aritzhack.underMine.mob;
 
 import io.github.aritzhack.aritzh.awt.audio.Sound;
 import io.github.aritzhack.aritzh.awt.gameEngine.input.InputHandler;
 import io.github.aritzhack.aritzh.awt.render.AnimatedSprite;
 import io.github.aritzhack.aritzh.awt.render.Sprite;
-import io.github.aritzhack.ld29.Game;
-import io.github.aritzhack.ld29.level.Level;
-import io.github.aritzhack.ld29.level.Tile;
+import io.github.aritzhack.underMine.Game;
+import io.github.aritzhack.underMine.level.Level;
+import io.github.aritzhack.underMine.level.Tile;
 
 import java.awt.event.KeyEvent;
 import java.util.ConcurrentModificationException;
 
-import static io.github.aritzhack.ld29.Game.SPRITE_SIZE;
+import static io.github.aritzhack.underMine.Game.SPRITE_SIZE;
 
 /**
  * @author Aritz Lopez

@@ -1,8 +1,8 @@
-package io.github.aritzhack.ld29.mob;
+package io.github.aritzhack.underMine.mob;
 
 import io.github.aritzhack.aritzh.awt.render.AnimatedSprite;
-import io.github.aritzhack.ld29.Game;
-import io.github.aritzhack.ld29.level.Level;
+import io.github.aritzhack.underMine.Game;
+import io.github.aritzhack.underMine.level.Level;
 
 /**
  * @author Aritz Lopez

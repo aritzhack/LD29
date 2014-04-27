@@ -1,4 +1,4 @@
-package io.github.aritzhack.ld29;
+package io.github.aritzhack.underMine;
 
 import com.google.common.collect.Sets;
 import io.github.aritzhack.aritzh.awt.audio.Sound;
@@ -11,9 +11,9 @@ import io.github.aritzhack.aritzh.awt.render.Sprite;
 import io.github.aritzhack.aritzh.awt.render.SpriteSheetLoader;
 import io.github.aritzhack.aritzh.logging.ILogger;
 import io.github.aritzhack.aritzh.logging.SLF4JLogger;
-import io.github.aritzhack.ld29.gui.Button;
-import io.github.aritzhack.ld29.level.Level;
-import io.github.aritzhack.ld29.util.Util;
+import io.github.aritzhack.underMine.gui.Button;
+import io.github.aritzhack.underMine.level.Level;
+import io.github.aritzhack.underMine.util.Util;
 
 import javax.imageio.ImageIO;
 import java.awt.Color;
@@ -31,7 +31,7 @@ import java.util.Set;
  */
 public class Game implements IGame {
 
-    public static final String GAME_NAME = "LD29";
+    public static final String GAME_NAME = "UnderMine";
     public static final ILogger LOG = new SLF4JLogger(GAME_NAME);
     public static final int SPRITE_SIZE = 32, TOP_MARGIN = 80;
     public static final Map<String, Sprite> SPRITES = SpriteSheetLoader.load("sheet.sht");
