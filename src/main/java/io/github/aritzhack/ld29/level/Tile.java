@@ -151,6 +151,10 @@ public class Tile {
         this.isFlagged = !this.isFlagged;
     }
 
+    public boolean isFlagged() {
+        return isFlagged;
+    }
+
     public static enum TileType {
         MINE("mine"), NORMAL("empty");
 

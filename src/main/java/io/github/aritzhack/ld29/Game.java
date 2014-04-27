@@ -12,6 +12,7 @@ import io.github.aritzhack.aritzh.logging.ILogger;
 import io.github.aritzhack.aritzh.logging.SLF4JLogger;
 import io.github.aritzhack.ld29.level.Level;
 
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.util.Map;
@@ -26,6 +27,7 @@ public class Game implements IGame {
     public static final int SPRITE_SIZE = 32, TOP_MARGIN = 80;
     public static final Map<String, Sprite> SPRITES = SpriteSheetLoader.load("sheet.sht");
     public static final Sound BG_SOUND = new Sound(Game.class.getResourceAsStream("/audio/bg.wav"));
+    public static final Font CONSOLAS_28 = new Font("Consolas", Font.BOLD, 28);
 
     public static boolean altMove = false;
 
@@ -74,7 +76,7 @@ public class Game implements IGame {
     @Override
     public void onUpdate() {
 
-        if(!BG_SOUND.isPlaying()) BG_SOUND.play();
+        if (!BG_SOUND.isPlaying()) BG_SOUND.play();
 
         switch (this.stage) {
             case MAIN_MENU:

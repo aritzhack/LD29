@@ -1,6 +1,7 @@
 package io.github.aritzhack.ld29.level;
 
 import com.google.common.collect.Sets;
+import io.github.aritzhack.aritzh.awt.gameEngine.input.InputHandler;
 import io.github.aritzhack.aritzh.awt.render.IRender;
 import io.github.aritzhack.ld29.Game;
 import io.github.aritzhack.ld29.mob.Enemy;
@@ -11,6 +12,7 @@ import io.github.aritzhack.ld29.util.Util;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
@@ -30,6 +32,9 @@ public class Level {
     private final Player player;
     private final Set<Mob> mobs = Sets.newHashSet();
     private final Stack<Mob> toSpawn = new Stack<>();
+    private final int SMILEY_SIZE = (int) (Game.SPRITE_SIZE * 1.2);
+    private final Rectangle smileyBounds;
+    private boolean smileyIsPressed = false;
     private Game game;
     private int enemyDamage = 0;
 
@@ -40,6 +45,7 @@ public class Level {
         this.tiles = new Tile[width][height];
         this.player = new Player(this, Game.TOP_MARGIN + 10, 10);
         this.mobs.add(this.player);
+        this.smileyBounds = new Rectangle(this.game.getWidth() / 2 - SMILEY_SIZE / 2, Game.TOP_MARGIN / 2 - SMILEY_SIZE / 2, SMILEY_SIZE, SMILEY_SIZE);
     }
 
     public void initLevel(Difficulty difficulty) {
@@ -70,10 +76,12 @@ public class Level {
             }
         }
         this.mobs.forEach(e -> e.render(r));
+
         r.draw(r.getWidth() / 2 - Game.SPRITE_SIZE / 2, Game.TOP_MARGIN / 2 - Game.SPRITE_SIZE / 2, "smiley");
-        r.draw(20, Game.TOP_MARGIN / 2 - 25, "healthbg");
+        final int leftMargin = 115;
+        r.draw(leftMargin + 20, Game.TOP_MARGIN / 2 - 25, "healthbg");
         for (int i = 0; i < this.player.getHealth() / 20f; i++) {
-            r.draw(35 + i * 20, Game.TOP_MARGIN / 2 - 17, "health_point");
+            r.draw(leftMargin + 35 + i * 20, Game.TOP_MARGIN / 2 - 17, "health_point");
         }
     }
 
@@ -83,6 +91,29 @@ public class Level {
         int margin1 = 10;
 
         Util.drawBeveled(g, BG_COLOR, margin1, margin1, this.game.getWidth() - margin1 * 2, Game.TOP_MARGIN - margin1 * 2, true);
+
+
+        Util.drawBeveled(g, BG_COLOR, this.smileyBounds.x, this.smileyBounds.y, this.smileyBounds.width, this.smileyBounds.height, smileyIsPressed);
+
+        g.setFont(Game.CONSOLAS_28);
+
+        final int enemyCount = this.mobs.stream().filter(m -> m instanceof Enemy).mapToInt(m -> 1).sum();
+        int mineCount = 0;
+        for (Tile[] tiles : this.tiles) {
+            for (Tile t : tiles) {
+                if (t.getType() == Tile.TileType.MINE) mineCount++;
+                if (t.isFlagged()) mineCount--;
+            }
+        }
+
+        g.setColor(Color.red.darker());
+        Util.drawStringAligned(g, "Enemies: " + enemyCount, Util.HAlignment.RIGHT, Util.VAlignment.CENTER, this.game.getWidth() - 30, Game.TOP_MARGIN / 2, true, false);
+        g.setColor(Color.green.darker());
+
+        Util.drawStringAligned(g, "Health:", Util.HAlignment.LEFT, Util.VAlignment.CENTER, 25, Game.TOP_MARGIN / 2, true, false);
+
+        g.setColor(Color.black);
+        Util.drawStringAligned(g, "Mines: " + mineCount, Util.HAlignment.LEFT, Util.VAlignment.CENTER, this.game.getWidth() / 2 + 35, Game.TOP_MARGIN / 2, true, false);
 
     }
 
@@ -118,6 +149,14 @@ public class Level {
             }
         }
         this.mobs.forEach(Mob::update);
+
+        final InputHandler ih = this.game.getGame().getInputHandler();
+        while (!ih.getMouseEvents().empty()) {
+            InputHandler.MouseInputEvent e = ih.getMouseEvents().pop();
+            if (e.getAction() == (this.smileyIsPressed ? InputHandler.MouseAction.RELEASED : InputHandler.MouseAction.PRESSED)) {
+                this.smileyIsPressed = this.smileyIsPressed ^ this.smileyBounds.contains(e.getPosition());
+            }
+        }
     }
 
     private void clearDeadMobs() {this.mobs.removeAll(this.mobs.stream().filter(Mob::isDead).filter(m -> !(m instanceof Player)).collect(Collectors.toSet()));}

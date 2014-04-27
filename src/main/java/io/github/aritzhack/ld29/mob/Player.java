@@ -84,7 +84,7 @@ public class Player extends Mob {
         }
 
         try {
-            if (ih.getMouseEvents().stream().filter(e -> e.getAction() == InputHandler.MouseAction.RELEASED).count() != 0) {
+            if (ih.getMouseEvents().stream().filter(e -> e.getAction() == InputHandler.MouseAction.RELEASED).filter(e -> e.getPosition().getY() > Game.TOP_MARGIN).count() != 0) {
                 this.fire();
                 LASER.play();
             }
@@ -110,6 +110,5 @@ public class Player extends Mob {
 
     public void hurt(int count) {
         this.health -= count;
-        Game.LOG.d("Health: {}", this.health);
     }
 }
