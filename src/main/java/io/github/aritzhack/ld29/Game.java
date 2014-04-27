@@ -54,7 +54,7 @@ public class Game implements IGame {
 
         BufferedImage temp;
         try {
-            temp = ImageIO.read(this.getClass().getResourceAsStream("bgImage.png"));
+            temp = ImageIO.read(this.getClass().getResourceAsStream("/bgImage.png"));
         } catch (IOException e) {
             e.printStackTrace();
             temp = null;
@@ -97,7 +97,7 @@ public class Game implements IGame {
 
         switch (this.stage) {
             case MAIN_MENU:
-
+                g.drawImage(this.bgImage, 0, 0, this.getWidth(), this.getHeight(), null);
                 this.buttons.forEach(b -> b.render(g));
                 break;
             case GAME:

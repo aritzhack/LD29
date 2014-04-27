@@ -36,8 +36,8 @@ public class Level {
     private final Rectangle smileyBounds;
     private boolean smileyIsPressed = false;
     private Game game;
-    private int enemyDamage = 0;
     private boolean gameOver;
+    private Difficulty difficulty;
 
     public Level(Game game, int width, int height) {
         this.game = game;
@@ -47,17 +47,6 @@ public class Level {
         this.player = new Player(this, Game.TOP_MARGIN + 10, 10);
         this.mobs.add(this.player);
         this.smileyBounds = new Rectangle(this.game.getWidth() / 2 - SMILEY_SIZE / 2, Game.TOP_MARGIN / 2 - SMILEY_SIZE / 2, SMILEY_SIZE, SMILEY_SIZE);
-    }
-
-    public void initLevel(Difficulty difficulty) {
-        RAND.setSeed(System.currentTimeMillis());
-        this.enemyDamage = difficulty.getEnemyDamage();
-
-        for (int x = 0; x < this.width; x++) {
-            for (int y = 0; y < this.height; y++) {
-                this.tiles[x][y] = new Tile(this, x, y, RAND.nextInt(100) < difficulty.getMineProbability() ? Tile.TileType.MINE : Tile.TileType.NORMAL);
-            }
-        }
     }
 
     public Tile[][] getTiles() {
@@ -109,60 +98,81 @@ public class Level {
 
         g.setColor(Color.red.darker());
         Util.drawStringAligned(g, "Enemies: " + enemyCount, Util.HAlignment.RIGHT, Util.VAlignment.CENTER, this.game.getWidth() - 30, Game.TOP_MARGIN / 2, true, false);
-        g.setColor(Color.green.darker());
 
+        g.setColor(new Color(0, 152, 0));
         Util.drawStringAligned(g, "Health:", Util.HAlignment.LEFT, Util.VAlignment.CENTER, 25, Game.TOP_MARGIN / 2, true, false);
 
         g.setColor(Color.black);
-        Util.drawStringAligned(g, "Mines: " + mineCount, Util.HAlignment.LEFT, Util.VAlignment.CENTER, this.game.getWidth() / 2 + 35, Game.TOP_MARGIN / 2, true, false);
+        Util.drawStringAligned(g, "Mines: " + mineCount, Util.HAlignment.LEFT, Util.VAlignment.CENTER, this.game.getWidth() / 2 + 50, Game.TOP_MARGIN / 2, true, false);
 
     }
 
     public void update(Game game) {
 
-        if(this.gameOver) return;
+        if (!this.gameOver) {
 
-        this.toSpawn.forEach(this.mobs::add);
-        this.toSpawn.clear();
-        clearDeadMobs();
+            this.toSpawn.forEach(this.mobs::add);
+            this.toSpawn.clear();
+            clearDeadMobs();
 
-        this.mobs
-            .stream()
-            .filter(ray -> ray instanceof Ray) // Get only rays
-            .forEach(r -> this.mobs // Then, for each ray,
+            this.mobs
                 .stream()
-                .filter(enemy -> enemy instanceof Enemy) // Get only enemies
-                .filter(e -> e.getBounds().intersects(r.getBounds())) // Get only those that collide with the ray
-                .forEach(((Ray) r)::kill)); // Kill both the ray and the enemy
+                .filter(ray -> ray instanceof Ray) // Get only rays
+                .forEach(r -> this.mobs // Then, for each ray,
+                    .stream()
+                    .filter(enemy -> enemy instanceof Enemy) // Get only enemies
+                    .filter(e -> e.getBounds().intersects(r.getBounds())) // Get only those that collide with the ray
+                    .forEach(((Ray) r)::kill)); // Kill both the ray and the enemy
 
-        clearDeadMobs();
+            clearDeadMobs();
 
-        this.mobs
-            .stream()
-            .filter(e -> e instanceof Enemy)
-            .filter(e -> ((Enemy) e).canDamage())
-            .filter(e -> e.getBounds().intersects(this.player.getBounds()))
-            .forEach(e -> ((Enemy) e).damage(this.player, this.enemyDamage));
+            this.mobs
+                .stream()
+                .filter(e -> e instanceof Enemy)
+                .filter(e -> ((Enemy) e).canDamage())
+                .filter(e -> e.getBounds().intersects(this.player.getBounds()))
+                .forEach(e -> ((Enemy) e).damage(this.player, this.difficulty.enemyDamage));
 
-        if (this.player.isDead()) this.gameOver = true;
+            if (this.player.isDead()) this.gameOver = true;
 
-        for (Tile[] tiles : this.tiles) {
-            for (Tile t : tiles) {
-                t.update(game);
+            for (Tile[] tiles : this.tiles) {
+                for (Tile t : tiles) {
+                    t.update(game);
+                }
             }
+            this.mobs.forEach(Mob::update);
         }
-        this.mobs.forEach(Mob::update);
 
         final InputHandler ih = this.game.getGame().getInputHandler();
+        boolean wasSmileyPressed = this.smileyIsPressed;
         while (!ih.getMouseEvents().empty()) {
             InputHandler.MouseInputEvent e = ih.getMouseEvents().pop();
             if (e.getAction() == (this.smileyIsPressed ? InputHandler.MouseAction.RELEASED : InputHandler.MouseAction.PRESSED)) {
                 this.smileyIsPressed = this.smileyIsPressed ^ this.smileyBounds.contains(e.getPosition());
+                if (this.smileyIsPressed && !wasSmileyPressed && this.gameOver) {
+                    this.gameOver = false;
+                    this.mobs.clear();
+                    this.mobs.add(this.player);
+                    this.initLevel(this.difficulty);
+                    this.player.revive();
+                }
+                break;
             }
         }
     }
 
     private void clearDeadMobs() {this.mobs.removeAll(this.mobs.stream().filter(Mob::isDead).filter(m -> !(m instanceof Player)).collect(Collectors.toSet()));}
+
+    public void initLevel(Difficulty difficulty) {
+        RAND.setSeed(System.currentTimeMillis());
+        this.difficulty = difficulty;
+
+        for (int x = 0; x < this.width; x++) {
+            for (int y = 0; y < this.height; y++) {
+                this.tiles[x][y] = new Tile(this, x, y, RAND.nextInt(100) < difficulty.getMineProbability() ? Tile.TileType.MINE : Tile.TileType.NORMAL);
+            }
+        }
+    }
 
     public void spawnEnemy() {
         int x = RAND.nextInt(this.game.getWidth());

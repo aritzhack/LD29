@@ -75,7 +75,7 @@ public class Button {
         g.fillRect(this.x + this.width, this.y + this.height, 1, 1);
 
         g.setFont(Game.CONSOLAS_28);
-        g.setColor(Color.white.darker());
+        g.setColor(new Color(89, 57, 0));
         this.text.ifPresent(s -> Util.drawStringAligned(g, s, Util.HAlignment.CENTER, Util.VAlignment.CENTER, this.x + this.width / 2, this.y + this.height / 2, true, false));
     }
 

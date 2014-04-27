@@ -21,6 +21,7 @@ public class Player extends Mob {
 
     private static final Sprite STILL_SPRITE = Game.SPRITES.get("player0");
     private static final Sound JUMP = new Sound(Player.class.getResourceAsStream("/audio/jump.wav"));
+    private static final int MAX_HEALTH = 200;
     private static final Sound LASER = new Sound(Player.class.getResourceAsStream("/audio/laser.wav"));
 
     private final AnimatedSprite aSprite = new AnimatedSprite(Game.SPRITES, "player", 4, 1000 / ANIM_SPEED);
@@ -29,7 +30,7 @@ public class Player extends Mob {
     public Player(Level level, int x, int y) {
         super(level, x, y);
         this.sprite = aSprite.getCurrentFrame(0);
-        this.health = 200;
+        this.health = MAX_HEALTH;
     }
 
     @Override
@@ -47,8 +48,8 @@ public class Player extends Mob {
         final double cos = Math.cos(this.angle);
         final double sin = Math.sin(this.angle);
 
-        final double mcos = Math.cos(-this.angle);
-        final double msin = Math.sin(-this.angle);
+        final double mCos = Math.cos(-this.angle);
+        final double mSin = Math.sin(-this.angle);
 
         if (ih.isKeyDown(KeyEvent.VK_W) || ih.isKeyDown(KeyEvent.VK_UP)) {
             if (Game.altMove) {
@@ -64,14 +65,14 @@ public class Player extends Mob {
         }
         if (ih.isKeyDown(KeyEvent.VK_A) || ih.isKeyDown(KeyEvent.VK_LEFT)) {
             if (Game.altMove) {
-                this.dx += mcos;
-                this.dy -= msin;
+                this.dx += mCos;
+                this.dy -= mSin;
             } else this.dx--;
         }
         if (ih.isKeyDown(KeyEvent.VK_D) || ih.isKeyDown(KeyEvent.VK_RIGHT)) {
             if (Game.altMove) {
-                this.dx -= mcos;
-                this.dy += msin;
+                this.dx -= mCos;
+                this.dy += mSin;
             } else this.dx++;
         }
 
@@ -110,5 +111,9 @@ public class Player extends Mob {
 
     public void hurt(int count) {
         this.health -= count;
+    }
+
+    public void revive() {
+        this.health = MAX_HEALTH;
     }
 }
