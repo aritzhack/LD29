@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>io.github.aritzhack</groupId>
-	<artifactId>LD29</artifactId>
+	<artifactId>UnderMine</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
 	<repositories>
@@ -22,14 +22,62 @@
 		<dependency>
 			<groupId>io.github.aritzhack</groupId>
 			<artifactId>aritzh-core</artifactId>
-			<version>1.1.7</version>
+			<version>1.1.8</version>
 		</dependency>
 		<dependency>
 			<groupId>io.github.aritzhack</groupId>
 			<artifactId>aritzh-awt</artifactId>
-			<version>1.1.7</version>
+			<version>1.1.8</version>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<target>1.8</target>
+					<source>1.8</source>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>io.github.aritzhack.ld29.Main</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<descriptorId>jar-with-dependencies</descriptorId>
+					<archive>
+						<manifest>
+							<mainClass>io.github.aritzhack.ld29.Main</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 
 </project>

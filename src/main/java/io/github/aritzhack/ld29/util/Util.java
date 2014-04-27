@@ -35,7 +35,11 @@ public enum Util {
         g.fillPolygon(topRight);
     }
 
-    public static void drawStringAligned(Graphics g, String s, HAlignment h, VAlignment v, int x, int y, boolean withBevel, boolean downwards) {
+    public static void drawCenteredString(Graphics g, String s, int x, int y, boolean border) {
+        Util.drawStringAligned(g, s, HAlignment.CENTER, VAlignment.CENTER, x, y, false, false, border);
+    }
+
+    public static void drawStringAligned(Graphics g, String s, HAlignment h, VAlignment v, int x, int y, boolean withBevel, boolean downwards, boolean border) {
         final FontMetrics fm = g.getFontMetrics();
         final Rectangle2D b = fm.getStringBounds(s, g);
 
@@ -73,6 +77,16 @@ public enum Util {
             g.drawString(s, nx + 1, ny + 1);
             g.setColor(c);
         }
+
+        if (border) {
+            Color color = g.getColor();
+            g.setColor(Color.black);
+
+            g.drawString(s, nx - 1, ny - 1);
+            g.drawString(s, nx + 1, ny + 1);
+            g.setColor(color);
+        }
+
         g.drawString(s, nx, ny);
 
     }

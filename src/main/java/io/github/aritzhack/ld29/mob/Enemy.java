@@ -15,7 +15,7 @@ public class Enemy extends Mob {
 
     public Enemy(Level level, int x, int y) {
         super(level, x, y);
-        this.speed = 1.5;
+        this.speed = 1.9;
         this.sprite = asprite.getCurrentFrame(0);
     }
 

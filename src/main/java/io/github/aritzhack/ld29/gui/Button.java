@@ -1,8 +1,9 @@
-package io.github.aritzhack.ld29;
+package io.github.aritzhack.ld29.gui;
 
 import io.github.aritzhack.aritzh.awt.gameEngine.input.InputHandler;
 import io.github.aritzhack.aritzh.util.NotNull;
 import io.github.aritzhack.aritzh.util.Nullable;
+import io.github.aritzhack.ld29.Game;
 import io.github.aritzhack.ld29.util.Util;
 
 import java.awt.Color;
@@ -75,8 +76,8 @@ public class Button {
         g.fillRect(this.x + this.width, this.y + this.height, 1, 1);
 
         g.setFont(Game.CONSOLAS_28);
-        g.setColor(new Color(89, 57, 0));
-        this.text.ifPresent(s -> Util.drawStringAligned(g, s, Util.HAlignment.CENTER, Util.VAlignment.CENTER, this.x + this.width / 2, this.y + this.height / 2, true, false));
+        g.setColor(new Color(255, 255, 255));
+        this.text.ifPresent(s -> Util.drawStringAligned(g, s, Util.HAlignment.CENTER, Util.VAlignment.CENTER, this.x + this.width / 2, this.y + this.height / 2, false, false, true));
     }
 
     public Optional<String> getText() {

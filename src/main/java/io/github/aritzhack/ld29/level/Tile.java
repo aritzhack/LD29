@@ -72,6 +72,7 @@ public class Tile {
 
     public void setShowing(boolean isShowing, boolean showOthers) {
         this.isShowing = isShowing;
+        this.isFlagged = false;
         if (showOthers) this.getNeighborsToShow().forEach(Tile::pressed);
     }
 
@@ -120,13 +121,14 @@ public class Tile {
     }
 
     public void press() {
+        if (this.isShowing) return;
+        if (this.type != TileType.MINE) this.level.spawnEnemy();
         this.setShowing(true, true);
-        if (Level.RAND.nextInt(10) > 6 && this.type != TileType.MINE) this.level.spawnEnemy();
     }
 
     public void pressed() {
+        if (!this.isShowing && this.type != TileType.MINE) this.level.spawnEnemy();
         this.setShowing(true, false);
-        if (Level.RAND.nextInt(10) > 3 && this.type != TileType.MINE) this.level.spawnEnemy();
     }
 
     @Override
@@ -148,11 +150,15 @@ public class Tile {
     }
 
     public void toggleFlag() {
-        this.isFlagged = !this.isFlagged;
+        this.isFlagged = (!this.isFlagged && !this.isShowing);
     }
 
     public boolean isFlagged() {
         return isFlagged;
+    }
+
+    public boolean isShowing() {
+        return this.isShowing;
     }
 
     public static enum TileType {

@@ -35,7 +35,7 @@ public abstract class Mob {
         final int centerX = s.getWidth() / 2;
         final int centerY = s.getHeight() / 2;
 
-        for (int x = 0; x < s.getWidth(); x++)
+        for (int x = 0; x < s.getWidth(); x++) {
             for (int y = 0; y < s.getHeight(); y++) {
                 final int m = x - centerX;
                 final int n = y - centerY;
@@ -44,6 +44,7 @@ public abstract class Mob {
                 if (j >= 0 && j < s.getWidth() && k >= 0 && k < s.getHeight())
                     rotated[(y * s.getWidth() + x)] = s.getPixels()[(k * s.getWidth() + j)];
             }
+        }
         return new Sprite(s.getWidth(), s.getHeight(), rotated);
     }
 
