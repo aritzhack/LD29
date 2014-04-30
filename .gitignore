@@ -1,3 +1,5 @@
 .idea/
 *.iml
 target/
+src/main/html/UnderMine.jar
+src/main/html/index.html
